@@ -158,7 +158,7 @@ var Ruby5Favorites = function($) {
     var location = window.location.href;
     if (!location.match(/\/episodes\/\d+/)) {
       // trying to find out premalink
-      var slug = $('#current-episode-title').text().toLowerCase().replace(/[ #,-]+/g, '-');
+      var slug = $('#current-episode-title').text().trim().toLowerCase().replace(/[ #,-]+/g, '-');
       var prevId = $('h2:eq(1) a').attr('href').match(/\/(\d+)/)[1]-0;
       location = 'http://ruby5.envylabs.com/episodes/'+(prevId+1)+'-'+slug;
     }
