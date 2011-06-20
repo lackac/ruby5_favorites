@@ -1,6 +1,6 @@
 {
   "name": "Ruby5 Favorites"
-, "version": "1.0.1"
+, "version": "1.0.2"
 , "description": "Keep record of your favorite Ruby5 stories or the ones that you want to check later"
 , "icons": {
     "16":  "icon16.png"
