@@ -45,6 +45,7 @@ var Ruby5Favorites = function($) {
         var _ref = parseUri(uri), slug = _ref.slug, story = _ref.story;
         return favs.some(function(fav) { return fav.slug === slug && fav.story === story; });
       },
+
       addFavorite: function(uri, title) {
         // is it already saved to the list?
         if (this.isFavorite(uri)) return;
@@ -53,6 +54,7 @@ var Ruby5Favorites = function($) {
         save();
         this.render();
       },
+
       removeFavorite: function(uri) {
         // is it in the list?
         var _ref = parseUri(uri), slug = _ref.slug, story = _ref.story;
@@ -63,9 +65,11 @@ var Ruby5Favorites = function($) {
           this.render();
         }
       },
+
       all: function() {
         return favs;
       },
+
       groupedByEpisode: function() {
         return favs.reduce(function(memo, fav) {
           var key = 'Episode '+fav.episode;
@@ -74,6 +78,7 @@ var Ruby5Favorites = function($) {
           return memo;
         }, {});
       },
+
       render: function() {
         if ($('#favorites').length == 0) {
           var self = this;
@@ -95,6 +100,7 @@ var Ruby5Favorites = function($) {
               }
             }
           });
+
           var title = $('<h6>Ruby5 Favorites</h6>').click(function(e) {
             e.preventDefault();
             if (list.is(':hidden')) {
@@ -110,20 +116,35 @@ var Ruby5Favorites = function($) {
               });
             }
           });
+
+          var clear = $('<a href="#" class="clear">clear</a>').click(function(e) {
+            e.preventDefault();
+            if (confirm("Do you really want to delete all your favorites?")) {
+              favs = [];
+              localStorage.favorites = "[]";
+              self.render();
+              $('a.toggle-fav').removeClass('favorite');
+            }
+          });
+
           $('<div id="favorites"></div>').appendTo('body')
-            .append(title).append(list);
+            .append(title).append(clear).append(list);
           if (localStorage.favoritesOpen) {
             $('#favorites h6').css({width: '163px', textIndent: '40px'});
           } else {
             list.hide();
           }
         }
+
         // jQuery .html('') is really slow for this if there are many links
         var list = $('#favorites-list');
         list.get(0).innerHTML = "";
         if (favs.length == 0) {
           list.append('<li>No favorites yet. Mark some favorites with the star icons.</li>');
+          $('#favorites a.clear').hide();
           return;
+        } else {
+          $('#favorites a.clear').show();
         }
         var favsInGroups = this.groupedByEpisode();
         for (var episode in favsInGroups) {
@@ -221,6 +242,12 @@ var styles = ' \
     background-repeat: no-repeat; \
     text-indent: 40px; \
     overflow: hidden; \
+  } \
+  #favorites a.clear { \
+    float: right; \
+    margin: 0.5em 0.5em 0 0; \
+    font-size: 0.8em; \
+    color: #ccc; \
   } \
   #favorites-list { \
     margin: 0; \
