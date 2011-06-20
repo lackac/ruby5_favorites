@@ -81,7 +81,7 @@ var Ruby5Favorites = function($) {
             var target = $(e.target);
             if (target.hasClass('fav-link')) {
               var href = target.attr('href'), story = href.match(/#.*$/)[0], storyId = story.match(/\d+/)[0];
-              if (href == window.location.href.replace(/#.*$/, '') + story) {
+              if (href == canonical_uri + story) {
                 // same page, emulating click event on story link
                 e.preventDefault();
                 $('.stories-listing a.story-link:eq('+storyId+')').click();
@@ -90,7 +90,7 @@ var Ruby5Favorites = function($) {
               e.preventDefault();
               var uri = target.prev().attr('href'), story = uri.match(/#.*$/)[0], storyId = story.match(/\d+/)[0];
               self.removeFavorite(uri);
-              if (window.location.href.replace(/#.*$/, '') == uri.replace(/#.*$/, '')) {
+              if (canonical_uri == uri.replace(/#.*$/, '')) {
                 $('.stories-listing a.story-link:eq('+storyId+')').parent().find('a.toggle-fav').removeClass('favorite');
               }
             }
@@ -148,28 +148,20 @@ var Ruby5Favorites = function($) {
     }
   }
 
-  var isEpisodePage = $('#current-episode-title').length > 0;
-  var favorites = getFavorites();
+  var isEpisodePage = $('#current-episode-title').length > 0,
+      canonical_uri = $('link[rel=canonical]').attr('href').replace(/\/stories\/.*$/, ''),
+      favorites = getFavorites();
   window.favs = favorites;
 
   favorites.render();
 
   if (isEpisodePage) {
-    var location = window.location.href;
-    if (!location.match(/\/episodes\/\d+/)) {
-      // trying to find out premalink
-      var slug = $('#current-episode-title').text().trim().toLowerCase().replace(/[ #,-]+/g, '-');
-      var prevId = $('h2:eq(1) a').attr('href').match(/\/(\d+)/)[1]-0;
-      location = 'http://ruby5.envylabs.com/episodes/'+(prevId+1)+'-'+slug;
-    }
-    location = location.replace(/(\/stories\/.*)?(#.*)?$/, '');
-
     $('.stories-listing li').each(function(i) {
       var li = $(this), uri = li.find('a:first').attr('href');
       if (uri.match(/\/stories\//)) {
         uri = uri.replace(/\/stories\/.*$/, '') + '#story-' + i;
       } else if (uri.match(/^#/)) {
-        uri = location + uri;
+        uri = canonical_uri + uri;
       }
       var title = $(this).find('a').text().replace(/^\s*/, '').replace(/\s*$/, '');
 
